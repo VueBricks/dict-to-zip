@@ -1,36 +1,54 @@
 import "@3r/tool"
-const saveFileName = `TEST_${new Date().timeFormat('yyyyMMddhhmm')}.zip`
+
 
 import { writeFileSync, readdirSync, statSync, readFileSync } from "fs";
 import JSZIP from "jszip";
 const zip = new JSZIP();
-const targetDir = "./dict";
 
-// 读取文件加入Zip包中
-function readdirJoinZip(zip, nowPath) {
+// 读取文件加入包中
+function readFileJoinZip(zip, nowPath) {
     let files = readdirSync(nowPath);
     files.forEach(function (fileName, index) {
         let fillPath = nowPath + "/" + fileName;
         let file = statSync(fillPath);
         if (file.isDirectory()) {
             let zipdir = zip.folder(fileName);
-            readdirJoinZip(zipdir, fillPath);
+            readFileJoinZip(zipdir, fillPath);
         } else {
             zip.file(fileName, readFileSync(fillPath));
         }
     });
 }
 
-// 执行方法
-readdirJoinZip(zip, targetDir);
+// 构建压缩包
+function buildZip(saveFileName, targetDir = "./dict") {
+    // 执行方法
+    readFileJoinZip(zip, targetDir);
+    zip.generateAsync({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+        compressionOptions: {
+            level: 9
+        }
+    }).then(function (content) {
+        writeFileSync("./" + saveFileName, content, "utf-8");
+    });
+}
 
-zip.generateAsync({
-    type: "nodebuffer",
-    compression: "DEFLATE",
-    compressionOptions: {
-        level: 9
-    }
-}).then(function (content) {
-    writeFileSync("./" + saveFileName, content, "utf-8");
+
+// 获取Git版本号
+import { exec } from 'child_process';
+
+function getGitCommitHash(callback) {
+    exec('git rev-parse HEAD', (error, stdout, stderr) => {
+        callback(stdout.trim());
+    });
+}
+
+getGitCommitHash(gitCommitHash => {
+    console.log(`当前Git版本号: ${gitCommitHash}`);
+    let saveFileName = `TEST_${new Date().timeFormat('yyyyMMddhhmm')}_${String(gitCommitHash).substring(0, 8)}.zip`
+    buildZip(saveFileName)
 });
+
 
