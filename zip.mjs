@@ -1,6 +1,4 @@
 import "@3r/tool"
-
-
 import { writeFileSync, readdirSync, statSync, readFileSync } from "fs";
 import JSZIP from "jszip";
 const zip = new JSZIP();
@@ -36,14 +34,22 @@ function buildZip(saveFileName, targetDir = "./dict") {
 }
 
 
-// 获取Git版本号
 import { exec } from 'child_process';
 
+// 获取Git版本号
 function getGitCommitHash(callback) {
     exec('git rev-parse HEAD', (error, stdout, stderr) => {
         callback(stdout.trim());
     });
 }
+
+// 获取Svn版本号
+function getSvnCommitHash(callback) {
+    exec('svn info --show-item revision', (error, stdout, stderr) => {
+        callback(stdout.trim());
+    });
+}
+
 
 getGitCommitHash(gitCommitHash => {
     console.log(`当前Git版本号: ${gitCommitHash}`);
@@ -52,3 +58,6 @@ getGitCommitHash(gitCommitHash => {
 });
 
 
+getSvnCommitHash(svnCommitHash => {
+    console.log(`当前Svn版本号: ${svnCommitHash}`);
+})
