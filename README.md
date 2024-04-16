@@ -36,7 +36,7 @@ getGitCommitHash(gitCommitHash => {
 });
 ```
 
-将Dict文件夹打包成Zip并且根据时间版号进行命名
+将Dist文件夹打包成Zip并且根据时间版号进行命名
 
 安装依赖包
 ```shell
@@ -65,7 +65,7 @@ function readFileJoinZip(zip, nowPath) {
 }
 
 // 构建压缩包
-function buildZip(saveFileName, targetDir = "./dict") {
+function buildZip(saveFileName, targetDir = "./dist") {
     // 执行方法
     readFileJoinZip(zip, targetDir);
     zip.generateAsync({
@@ -111,4 +111,4 @@ getSvnCommitHash(svnCommitHash => {
 ```
 
 
-> GitHub 地址: https://github.com/VueBricks/dict-to-zip
+> GitHub 地址: https://github.com/VueBricks/dist-to-zip

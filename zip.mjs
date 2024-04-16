@@ -19,7 +19,7 @@ function readFileJoinZip(zip, nowPath) {
 }
 
 // 构建压缩包
-function buildZip(saveFileName, targetDir = "./dict") {
+function buildZip(saveFileName, targetDir = "./dist") {
     // 执行方法
     readFileJoinZip(zip, targetDir);
     zip.generateAsync({
